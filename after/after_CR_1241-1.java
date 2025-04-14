@@ -3,14 +3,6 @@ Added broadcasts for external power events.
 
 
 
-
-
-
-
-
-
-
-
 diff --git a/core/java/android/content/Intent.java b/core/java/android/content/Intent.java
 index c76158c..598e0e8 100644
 

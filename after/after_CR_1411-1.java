@@ -4,14 +4,6 @@ This addresses toolchain issues; seehttp://code.google.com/p/android/issues/deta
 
 
 
-
-
-
-
-
-
-
-
 diff --git a/tools/apicheck/src/com/android/apicheck/FieldInfo.java b/tools/apicheck/src/com/android/apicheck/FieldInfo.java
 index 9b467af..a962af5 100644
 

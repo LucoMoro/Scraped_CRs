@@ -1,8 +1,4 @@
 Add support for returning the most recent result as a string to the calling activity.
-
-
-
-
 diff --git a/src/com/android/calculator2/Calculator.java b/src/com/android/calculator2/Calculator.java
 index eb7453d..2be5025 100644
 
@@ -10,7 +6,6 @@ index eb7453d..2be5025 100644
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.content.Intent;
 import android.content.res.Configuration;
 
 public class Calculator extends Activity {
@@ -18,11 +13,8 @@ public class Calculator extends Activity {
 mHistory = mPersist.history;
 
 mDisplay = (CalculatorDisplay) findViewById(R.id.display);
-        
-        Intent returnResult = new Intent(""); // Result return to calling activity
-        setResult(RESULT_OK, returnResult);
-        
-        mLogic = new Logic(this, mHistory, mDisplay, (Button) findViewById(R.id.equal), returnResult);
+
+        mLogic = new Logic(this, mHistory, mDisplay, (Button) findViewById(R.id.equal));
 HistoryAdapter historyAdapter = new HistoryAdapter(this, mHistory, mLogic);
 mHistory.setObserver(historyAdapter);
 View view;
@@ -41,7 +33,6 @@ index 244f438..34cc24d 100644
 import android.widget.Button;
 import android.widget.EditText;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Configuration;
 
 import org.javia.arity.Symbols;
@@ -49,7 +40,6 @@ import org.javia.arity.Symbols;
 private History mHistory;
 private String  mResult = "";
 private Button mEqualButton;
-    private Intent mReturnResult;
 private final String mEnterString;
 private boolean mIsError = false;
 private final boolean mOrientationPortrait;
@@ -57,7 +47,7 @@ private final boolean mOrientationPortrait;
 
 private final String mErrorString;
 
-    Logic(Context context, History history, CalculatorDisplay display, Button equalButton, Intent returnResult) {
+    Logic(Context context, History history, CalculatorDisplay display, Button equalButton) {
 mErrorString = context.getResources().getString(R.string.error);
 mOrientationPortrait = context.getResources().getConfiguration().orientation
 == Configuration.ORIENTATION_PORTRAIT;
@@ -65,8 +55,6 @@ mOrientationPortrait = context.getResources().getConfiguration().orientation
 mDisplay.setLogic(this);
 mEqualButton = equalButton;
 mEnterString = context.getText(R.string.enter).toString();
-        
-        mReturnResult = returnResult;
 
 clearWithHistory(false);
 }
@@ -74,7 +62,6 @@ clearWithHistory(false);
 mIsError = true;
 mResult = mErrorString;
 }
-            mReturnResult.setAction(mResult);
 if (text.equals(mResult)) {
 //no need to show result, it is exactly what the user entered
 clearWithHistory(true);
