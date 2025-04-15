@@ -1,0 +1,566 @@
+/*Skip tests if it includes unsupported locale/charset
+
+A device may not support any specific locale (i.e. China, German, etc,.)
+
+Change-Id:I894bfc76d3503d879913ff33a2b5e8887ea2ca49*/
+
+
+
+
+//Synthetic comment -- diff --git a/luni/src/test/java/org/apache/harmony/luni/tests/java/io/InputStreamReaderTest.java b/luni/src/test/java/org/apache/harmony/luni/tests/java/io/InputStreamReaderTest.java
+old mode 100644
+new mode 100755
+//Synthetic comment -- index e4e8046..36b3022
+
+//Synthetic comment -- @@ -423,14 +423,14 @@
+"tests/api/java/io/testfile.txt");
+try {
+reader = new InputStreamReader(in, "gb18030");
+            while ((c = reader.read()) != -1) {
+                sb.append((char) c);
+            }
+            assertEquals(source, sb.toString());
+} catch (UnsupportedEncodingException e) {
+System.out
+.println("GB18030 is not supported, abort test InputStreamReaderTest.testSpecialCharsetReading().");
+}
+}
+
+/**
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/luni/src/test/java/org/apache/harmony/luni/tests/java/lang/StringBufferTest.java b/luni/src/test/java/org/apache/harmony/luni/tests/java/lang/StringBufferTest.java
+//Synthetic comment -- index c5499e7..0067d4c 100644
+
+//Synthetic comment -- @@ -17,6 +17,7 @@
+package org.apache.harmony.luni.tests.java.lang;
+
+import java.io.Serializable;
+import java.nio.charset.Charset;
+
+import junit.framework.TestCase;
+
+//Synthetic comment -- @@ -97,10 +98,12 @@
+
+buffer.append("abcde");
+assertEquals("abcde", buffer.toString());
+        if (Charset.isSupported("GB18030")) {
+            buffer.setLength(1000);
+            byte[] bytes = buffer.toString().getBytes("GB18030");
+            for (int i = 5; i < bytes.length; i++) {
+                assertEquals(0, bytes[i]);
+            }
+}
+
+buffer.setLength(5);
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/luni/src/test/java/org/apache/harmony/luni/tests/java/lang/StringBuilderTest.java b/luni/src/test/java/org/apache/harmony/luni/tests/java/lang/StringBuilderTest.java
+//Synthetic comment -- index d9acab0..b376a38 100644
+
+//Synthetic comment -- @@ -19,7 +19,7 @@
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.nio.charset.Charset;
+import junit.framework.TestCase;
+
+import org.apache.harmony.testframework.serialization.SerializationTest;
+//Synthetic comment -- @@ -1912,10 +1912,12 @@
+sb.setLength(0);
+sb.append("abcde");
+assertEquals("abcde", sb.toString());
+        if (Charset.isSupported("GB18030")) {
+            sb.setLength(1000);
+            byte[] bytes = sb.toString().getBytes("GB18030");
+            for (int i = 5; i < bytes.length; i++) {
+                assertEquals(0, bytes[i]);
+            }
+}
+
+sb.setLength(5);
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/luni/src/test/java/tests/api/java/util/CalendarTest.java b/luni/src/test/java/tests/api/java/util/CalendarTest.java
+old mode 100644
+new mode 100755
+//Synthetic comment -- index bca091f..eaa8e36
+
+//Synthetic comment -- @@ -29,6 +29,8 @@
+
+import org.apache.harmony.testframework.serialization.SerializationTest;
+
+import tests.support.Support_Locale;
+
+public class CalendarTest extends junit.framework.TestCase {
+	
+	Locale defaultLocale;
+//Synthetic comment -- @@ -653,12 +655,16 @@
+*/
+public void test_getInstance() {
+// test getInstance(Locale)
+        if (Support_Locale.areLocalesAvailable(Locale.US)) {
+            Calendar us_calendar = Calendar.getInstance(Locale.US);
+            assertEquals(Calendar.SUNDAY, us_calendar
+                    .getFirstDayOfWeek());
+        }
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            Calendar ch_calendar = Calendar.getInstance(Locale.CHINESE);
+            assertEquals(Calendar.MONDAY, ch_calendar
+                    .getFirstDayOfWeek());
+        }
+
+// test getInstance(Locale, TimeZone)
+Calendar gmt_calendar = Calendar.getInstance(TimeZone
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/luni/src/test/java/tests/api/java/util/ScannerTest.java b/luni/src/test/java/tests/api/java/util/ScannerTest.java
+old mode 100644
+new mode 100755
+//Synthetic comment -- index 5587a42..76e677f
+
+//Synthetic comment -- @@ -1901,34 +1901,40 @@
+* Different locale can only recognize corresponding locale sensitive
+* string. ',' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23,456 23,456");
+            s.useLocale(Locale.GERMANY);
+            try {
+                s.nextBigInteger(10);
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+            s.useLocale(Locale.ENGLISH);
+            // If exception is thrown out, input will not be advanced.
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+}
+
+/*
+* ''' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23'456 23'456");
+            s.useLocale(Locale.GERMANY);
+            try {
+                s.nextBigInteger(10);
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(new Locale[] { new Locale("de", "CH") })) {
+            s.useLocale(new Locale("de", "CH"));
+            // If exception is thrown out, input will not be advanced.
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+        }
+
+/*
+* The input string has Arabic-Indic digits.
+//Synthetic comment -- @@ -1947,18 +1953,22 @@
+* '.' is used in many locales as group separator. The input string
+* has Arabic-Indic digits .
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("23.45\u0666 23.456");
+            s.useLocale(Locale.CHINESE);
+            try {
+                s.nextBigInteger(10);
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s.useLocale(Locale.GERMANY);
+            // If exception is thrown out, input will not be advanced.
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+        }
+
+// The input string starts with zero
+s = new Scanner("03,456");
+//Synthetic comment -- @@ -1984,26 +1994,32 @@
+* There are 3 types of zero digit in all locales, '0' '\u0966' '\u0e50'
+* respectively, but they are not differentiated.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("12300");
+            s.useLocale(Locale.CHINESE);
+            assertEquals(new BigInteger("12300"), s.nextBigInteger(10));
+
+            s = new Scanner("123\u0966\u0966");
+            s.useLocale(Locale.CHINESE);
+            assertEquals(new BigInteger("12300"), s.nextBigInteger(10));
+
+            s = new Scanner("123\u0e50\u0e50");
+            s.useLocale(Locale.CHINESE);
+            assertEquals(new BigInteger("12300"), s.nextBigInteger(10));
+        }
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("ar", "AE")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("ar", "AE"));
+            assertEquals(new BigInteger("-123"), s.nextBigInteger(10));
+        }
+
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] { new Locale("mk", "MK")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("mk", "MK"));
+            assertEquals(new BigInteger("-123"), s.nextBigInteger(10));
+        }
+
+s.close();
+try {
+//Synthetic comment -- @@ -2050,34 +2066,40 @@
+* Different locale can only recognize corresponding locale sensitive
+* string. ',' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23,456 23,456");
+            s.useLocale(Locale.GERMANY);
+            try {
+                s.nextBigInteger();
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+            s.useLocale(Locale.ENGLISH);
+            // If exception is thrown out, input will not be advanced.
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+}
+
+/*
+* ''' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23'456 23'456");
+            s.useLocale(Locale.GERMANY);
+            try {
+                s.nextBigInteger();
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("de", "CH")})) {
+            s.useLocale(new Locale("de", "CH"));
+            // If exception is thrown out, input will not be advanced.
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+        }
+
+/*
+* The input string has Arabic-Indic digits.
+//Synthetic comment -- @@ -2098,18 +2120,22 @@
+* '.' is used in many locales as group separator. The input string
+* has Arabic-Indic digits .
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("23.45\u0666 23.456");
+            s.useLocale(Locale.CHINESE);
+            try {
+                s.nextBigInteger();
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s.useLocale(Locale.GERMANY);
+            // If exception is thrown out, input will not be advanced.
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+        }
+
+// The input string starts with zero
+s = new Scanner("03,456");
+//Synthetic comment -- @@ -2136,25 +2162,31 @@
+* There are 3 types of zero digit in all locales, '0' '\u0966' '\u0e50'
+* respectively, but they are not differentiated.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("12300");
+            s.useLocale(Locale.CHINESE);
+            assertEquals(new BigInteger("12300"), s.nextBigInteger());
+
+            s = new Scanner("123\u0966\u0966");
+            s.useLocale(Locale.CHINESE);
+            assertEquals(new BigInteger("12300"), s.nextBigInteger());
+
+            s = new Scanner("123\u0e50\u0e50");
+            s.useLocale(Locale.CHINESE);
+            assertEquals(new BigInteger("12300"), s.nextBigInteger());
+        }
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("ar", "AE")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("ar", "AE"));
+            assertEquals(new BigInteger("-123"), s.nextBigInteger());
+        }
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("mk", "MK")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("mk", "MK"));
+            assertEquals(new BigInteger("-123"), s.nextBigInteger());
+        }
+
+s.close();
+try {
+//Synthetic comment -- @@ -3412,40 +3444,46 @@
+* Different locale can only recognize corresponding locale sensitive
+* string. ',' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23,456 23,456");
+            s.useLocale(Locale.GERMANY);
+            assertFalse(s.hasNextBigInteger(10));
+            try {
+                s.nextBigInteger(10);
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+            s.useLocale(Locale.ENGLISH);
+            // If exception is thrown out, input will not be advanced.
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+}
+
+/*
+* ''' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23'456 23'456");
+            s.useLocale(Locale.GERMANY);
+            assertFalse(s.hasNextBigInteger(10));
+            try {
+                s.nextBigInteger(10);
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("de", "CH")})) {
+            s.useLocale(new Locale("de", "CH"));
+            // If exception is thrown out, input will not be advanced.
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+        }
+
+/*
+* The input string has Arabic-Indic digits.
+//Synthetic comment -- @@ -3467,21 +3505,25 @@
+* '.' is used in many locales as group separator. The input string
+* has Arabic-Indic digits .
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("23.45\u0666 23.456");
+            s.useLocale(Locale.CHINESE);
+            assertFalse(s.hasNextBigInteger(10));
+            try {
+                s.nextBigInteger(10);
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s.useLocale(Locale.GERMANY);
+            // If exception is thrown out, input will not be advanced.
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("23456"), s.nextBigInteger(10));
+        }
+
+// The input string starts with zero
+s = new Scanner("03,456");
+//Synthetic comment -- @@ -3511,31 +3553,37 @@
+* There are 3 types of zero digit in all locales, '0' '\u0966' '\u0e50'
+* respectively, but they are not differentiated.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("12300");
+            s.useLocale(Locale.CHINESE);
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("12300"), s.nextBigInteger(10));
+
+            s = new Scanner("123\u0966\u0966");
+            s.useLocale(Locale.CHINESE);
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("12300"), s.nextBigInteger(10));
+
+            s = new Scanner("123\u0e50\u0e50");
+            s.useLocale(Locale.CHINESE);
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("12300"), s.nextBigInteger(10));
+        }
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("ar", "AE")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("ar", "AE"));
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("-123"), s.nextBigInteger(10));
+        }
+
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] { new Locale("mk", "MK")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("mk", "MK"));
+            assertTrue(s.hasNextBigInteger(10));
+            assertEquals(new BigInteger("-123"), s.nextBigInteger(10));
+        }
+}
+
+/**
+//Synthetic comment -- @@ -3618,40 +3666,46 @@
+* Different locale can only recognize corresponding locale sensitive
+* string. ',' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23,456 23,456");
+            s.useLocale(Locale.GERMANY);
+            assertFalse(s.hasNextBigInteger());
+            try {
+                s.nextBigInteger();
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+            s.useLocale(Locale.ENGLISH);
+            // If exception is thrown out, input will not be advanced.
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+}
+
+/*
+* ''' is used in many locales as group separator.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s = new Scanner("23'456 23'456");
+            s.useLocale(Locale.GERMANY);
+            assertFalse(s.hasNextBigInteger());
+            try {
+                s.nextBigInteger();
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(new Locale[] { new Locale("de", "CH")})) {
+            s.useLocale(new Locale("de", "CH"));
+            // If exception is thrown out, input will not be advanced.
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+        }
+
+/*
+* The input string has Arabic-Indic digits.
+//Synthetic comment -- @@ -3674,21 +3728,25 @@
+* '.' is used in many locales as group separator. The input string
+* has Arabic-Indic digits .
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("23.45\u0666 23.456");
+            s.useLocale(Locale.CHINESE);
+            assertFalse(s.hasNextBigInteger());
+            try {
+                s.nextBigInteger();
+                fail("Should throw InputMismatchException");
+            } catch (InputMismatchException e) {
+                // Expected
+            }
+}
+        if (Support_Locale.areLocalesAvailable(Locale.GERMANY)) {
+            s.useLocale(Locale.GERMANY);
+            // If exception is thrown out, input will not be advanced.
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("23456"), s.nextBigInteger());
+        }
+
+// The input string starts with zero
+s = new Scanner("03,456");
+//Synthetic comment -- @@ -3719,30 +3777,36 @@
+* There are 3 types of zero digit in all locales, '0' '\u0966' '\u0e50'
+* respectively, but they are not differentiated.
+*/
+        if (Support_Locale.areLocalesAvailable(Locale.CHINESE)) {
+            s = new Scanner("12300");
+            s.useLocale(Locale.CHINESE);
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("12300"), s.nextBigInteger());
+
+            s = new Scanner("123\u0966\u0966");
+            s.useLocale(Locale.CHINESE);
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("12300"), s.nextBigInteger());
+
+            s = new Scanner("123\u0e50\u0e50");
+            s.useLocale(Locale.CHINESE);
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("12300"), s.nextBigInteger());
+        }
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] {new Locale("ar", "AE")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("ar", "AE"));
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("-123"), s.nextBigInteger());
+        }
+
+        if (Support_Locale.areLocalesAvailable(new Locale[] { new Locale("mk", "MK")})) {
+            s = new Scanner("-123");
+            s.useLocale(new Locale("mk", "MK"));
+            assertTrue(s.hasNextBigInteger());
+            assertEquals(new BigInteger("-123"), s.nextBigInteger());
+        }
+
+s.close();
+try {
+
+
+
+
+
+
+
