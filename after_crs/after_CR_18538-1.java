@@ -1,0 +1,42 @@
+/*Validate Telephony Manager Country Codes
+
+Bug 3065551
+
+Make sure getNetworkCountryIso and getSimCountryIso return
+ISO country codes and not MCC country codes. Also prohibit
+the use of 3-letter ISO codes...
+
+Change-Id:I060383c74f2c4ce2cf702fb91ab319f5bb8dbc33*/
+
+
+
+
+//Synthetic comment -- diff --git a/tests/tests/telephony/src/android/telephony/cts/TelephonyManagerTest.java b/tests/tests/telephony/src/android/telephony/cts/TelephonyManagerTest.java
+//Synthetic comment -- index 1ced4cd..d431636 100644
+
+//Synthetic comment -- @@ -440,4 +440,18 @@
+}
+}
+}
+
+    private static final String ISO_COUNTRY_CODE_PATTERN = "[A-Z]{2}|[a-z]{2}";
+
+    public void testGetNetworkCountryIso() {
+        assertTrue("Country code did not match pattern: " + ISO_COUNTRY_CODE_PATTERN,
+                Pattern.matches(ISO_COUNTRY_CODE_PATTERN,
+                        mTelephonyManager.getNetworkCountryIso()));
+    }
+
+    public void testGetSimCountryIso() {
+        assertTrue("Country code did not match pattern: " + ISO_COUNTRY_CODE_PATTERN,
+                Pattern.matches(ISO_COUNTRY_CODE_PATTERN,
+                        mTelephonyManager.getSimCountryIso()));
+    }
+}
+
+
+
+
+
+
+
