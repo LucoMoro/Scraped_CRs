@@ -1,0 +1,59 @@
+/*Fix TextViewTests#testMarquee for Landscape Mode
+
+Issue 8133
+
+The wider landscape mode doesn't cause the text to wrap and cause
+a marquee. Enclose the text view in a FrameLayout and set the
+text view to be small enough that it should wrap to cause a
+marquee on any device.
+
+Change-Id:Ib3bc6dc7086fe2016230709fae85f3397654ea53*/
+//Synthetic comment -- diff --git a/tests/tests/widget/src/android/widget/cts/TextViewTest.java b/tests/tests/widget/src/android/widget/cts/TextViewTest.java
+//Synthetic comment -- index eac5801..d7e210e 100644
+
+//Synthetic comment -- @@ -44,6 +44,7 @@
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.test.ActivityInstrumentationTestCase2;
+import android.test.TouchUtils;
+import android.test.UiThreadTest;
+//Synthetic comment -- @@ -83,6 +84,7 @@
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.View.OnCreateContextMenuListener;
+//Synthetic comment -- @@ -92,6 +94,8 @@
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.ExtractedText;
+import android.view.inputmethod.ExtractedTextRequest;
+import android.widget.Scroller;
+import android.widget.TextView;
+import android.widget.TextView.BufferType;
+//Synthetic comment -- @@ -3410,17 +3414,23 @@
+args = {boolean.class}
+)
+})
+public void testMarquee() {
+final MockTextView textView = new MockTextView(mActivity);
+textView.setText(LONG_TEXT);
+textView.setSingleLine();
+textView.setEllipsize(TruncateAt.MARQUEE);
+// make the fading to be shown
+textView.setHorizontalFadingEdgeEnabled(true);
+
+mActivity.runOnUiThread(new Runnable() {
+public void run() {
+                mActivity.setContentView(textView);
+}
+});
+mInstrumentation.waitForIdleSync();
+
+
+
+
+
+
+
