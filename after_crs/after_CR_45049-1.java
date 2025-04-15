@@ -1,0 +1,72 @@
+/*38700: wrong reporting of <requestFocus /> as missing size
+
+Change-Id:I93154fbe3c0d86b6767ef2283ecbc5038163c604*/
+
+
+
+
+//Synthetic comment -- diff --git a/lint/libs/lint_checks/src/com/android/tools/lint/checks/RequiredAttributeDetector.java b/lint/libs/lint_checks/src/com/android/tools/lint/checks/RequiredAttributeDetector.java
+//Synthetic comment -- index a71f4b4..8cb2c42 100644
+
+//Synthetic comment -- @@ -30,6 +30,7 @@
+import static com.android.SdkConstants.FQCN_GRID_LAYOUT_V7;
+import static com.android.SdkConstants.GRID_LAYOUT;
+import static com.android.SdkConstants.LAYOUT_RESOURCE_PREFIX;
+import static com.android.SdkConstants.REQUEST_FOCUS;
+import static com.android.SdkConstants.STYLE_RESOURCE_PREFIX;
+import static com.android.SdkConstants.TABLE_LAYOUT;
+import static com.android.SdkConstants.TABLE_ROW;
+//Synthetic comment -- @@ -311,12 +312,13 @@
+return;
+}
+
+                String tag = element.getTagName();
+                if (VIEW_MERGE.equals(tag)
+                        || VIEW_INCLUDE.equals(tag)
+                        || REQUEST_FOCUS.equals(tag)) {
+return;
+}
+
+String parentTag = element.getParentNode() != null
+?  element.getParentNode().getNodeName() : "";
+if (TABLE_LAYOUT.equals(parentTag)
+//Synthetic comment -- @@ -326,11 +328,7 @@
+return;
+}
+
+                boolean certain = true;
+boolean isRoot = isRootElement(element);
+if (isRoot || isRootElement(element.getParentNode())
+&& VIEW_MERGE.equals(parentTag)) {
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/lint/libs/lint_checks/tests/src/com/android/tools/lint/checks/RequiredAttributeDetectorTest.java b/lint/libs/lint_checks/tests/src/com/android/tools/lint/checks/RequiredAttributeDetectorTest.java
+//Synthetic comment -- index abf3e04..3bae4d7 100644
+
+//Synthetic comment -- @@ -82,4 +82,13 @@
+));
+}
+
+    public void testRequestFocus() throws Exception {
+        // See http://code.google.com/p/android/issues/detail?id=38700
+        assertEquals(
+            "No warnings.",
+
+            lintProject(
+                    "res/layout/edit_type.xml"
+            ));
+    }
+}
+
+
+
+
+
+
+
