@@ -1,0 +1,41 @@
+/*RadioInfo crashes if pdp.getApn returns null.
+
+The automated test cases found a problem where the pdp.getApn()
+returns null and as a consequence crashes the RadioInfo.
+
+This activity is not acessible from a user menu in settings,
+you have to start it with
+adb shell am start -a android.intent.action.MAIN
+ -n com.android.settings/.RadioInfo
+
+Change-Id:I3e2c0805a1d911824954c86f682f612ea5e379c0*/
+//Synthetic comment -- diff --git a/src/com/android/settings/RadioInfo.java b/src/com/android/settings/RadioInfo.java
+//Synthetic comment -- index f0fcdd7..046e3ee 100644
+
+//Synthetic comment -- @@ -59,6 +59,7 @@
+import com.android.internal.telephony.PhoneFactory;
+import com.android.internal.telephony.PhoneStateIntentReceiver;
+import com.android.internal.telephony.TelephonyProperties;
+import com.android.internal.telephony.gsm.GsmDataConnection;
+
+import org.apache.http.HttpResponse;
+//Synthetic comment -- @@ -790,12 +791,12 @@
+.append("\n    fail because ")
+.append(dc.getLastFailCause().toString());
+} else {
+if (dc instanceof GsmDataConnection) {
+GsmDataConnection pdp = (GsmDataConnection)dc;
+                    sb.append("    is connecting to ")
+                      .append(pdp.getApn().toString());
+                } else {
+                    sb.append("    is connecting");
+}
+}
+sb.append("\n===================");
+
+
+
+
+
+
+
