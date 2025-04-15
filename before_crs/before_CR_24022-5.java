@@ -1,0 +1,91 @@
+/*Add support to Ant for dependency checking
+
+This change adds dependency checking to the Ant generation of
+R.java. If no resources have been changed or added since the
+last generation of R.java then that call to aapt will be skipped.
+
+Change-Id:I262b94111316496fac54da8030a6d474dc30b584*/
+//Synthetic comment -- diff --git a/anttasks/src/com/android/ant/AaptExecLoopTask.java b/anttasks/src/com/android/ant/AaptExecLoopTask.java
+//Synthetic comment -- index 725f6b6..ed0277a 100644
+
+//Synthetic comment -- @@ -18,7 +18,6 @@
+
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.ExecTask;
+import org.apache.tools.ant.types.Path;
+
+//Synthetic comment -- @@ -51,7 +50,7 @@
+* <tr><td></td><td></td><td></td></tr>
+* </table>
+*/
+public final class AaptExecLoopTask extends Task {
+
+/**
+* Class representing a &lt;nocompress&gt; node in the main task XML.
+//Synthetic comment -- @@ -259,8 +258,10 @@
+// more R classes need to be created for libraries.
+if (mRFolder != null && new File(mRFolder).isDirectory()) {
+libPkgProp = taskProject.getProperty(AntConstants.PROP_PROJECT_LIBS_PKG);
+            // Replace ";" with ":" since that's what aapt expects
+            libPkgProp = libPkgProp.replace(';', ':');
+}
+// Call aapt. If there are libraries, we'll pass a non-null string of libs.
+callAapt(libPkgProp);
+//Synthetic comment -- @@ -278,7 +279,31 @@
+
+final boolean generateRClass = mRFolder != null && new File(mRFolder).isDirectory();
+
+if (generateRClass) {
+} else if (mResourceFilter == null) {
+System.out.println("Creating full resource package...");
+} else {
+//Synthetic comment -- @@ -347,7 +372,6 @@
+}
+
+// if the project contains libraries, force auto-add-overlay
+        Object libResRef = taskProject.getReference(AntConstants.PROP_PROJECT_LIBS_RES_REF);
+if (libResRef != null) {
+task.createArg().setValue("--auto-add-overlay");
+}
+//Synthetic comment -- @@ -417,6 +441,8 @@
+if (generateRClass) {
+task.createArg().setValue("-J");
+task.createArg().setValue(mRFolder);
+}
+
+// final setup of the task
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/anttasks/src/com/android/ant/BaseTask.java b/anttasks/src/com/android/ant/BaseTask.java
+new file mode 100644
+//Synthetic comment -- index 0000000..2126d3f
+
+//Synthetic comment -- @@ -0,0 +1,70 @@
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/anttasks/src/com/android/ant/DependencyGraph.java b/anttasks/src/com/android/ant/DependencyGraph.java
+new file mode 100644
+//Synthetic comment -- index 0000000..1cb7d17
+
+//Synthetic comment -- @@ -0,0 +1,254 @@
+
+
+
+
+
+
+
