@@ -1,0 +1,49 @@
+/*21296: Layout editor error when using numColumns attribute
+
+Change-Id:I2d2542a1044b3b1d1682b125b45e223aa3d921fa*/
+//Synthetic comment -- diff --git a/common/src/com/android/SdkConstants.java b/common/src/com/android/SdkConstants.java
+//Synthetic comment -- index cd0cdcd..474754d 100644
+
+//Synthetic comment -- @@ -801,6 +801,7 @@
+public static final String VALUE_VERTICAL = "vertical";             //$NON-NLS-1$
+public static final String VALUE_TRUE = "true";                     //$NON-NLS-1$
+public static final String VALUE_EDITABLE = "editable";             //$NON-NLS-1$
+
+
+// Values: Resources
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/eclipse/plugins/com.android.ide.eclipse.adt/src/com/android/ide/eclipse/adt/internal/editors/layout/gle2/LayoutMetadata.java b/eclipse/plugins/com.android.ide.eclipse.adt/src/com/android/ide/eclipse/adt/internal/editors/layout/gle2/LayoutMetadata.java
+//Synthetic comment -- index 82172fc..94bd058 100644
+
+//Synthetic comment -- @@ -22,6 +22,7 @@
+import static com.android.SdkConstants.GRID_VIEW;
+import static com.android.SdkConstants.LAYOUT_RESOURCE_PREFIX;
+import static com.android.SdkConstants.TOOLS_URI;
+
+import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
+//Synthetic comment -- @@ -341,10 +342,16 @@
+Element element = (Element) xmlNode;
+String columns = element.getAttributeNS(ANDROID_URI, ATTR_NUM_COLUMNS);
+int multiplier = 2;
+                if (columns != null && columns.length() > 0) {
+                    int c = Integer.parseInt(columns);
+                    if (c >= 1 && c <= 10) {
+                        multiplier = c;
+}
+}
+count *= multiplier;
+
+
+
+
+
+
+
