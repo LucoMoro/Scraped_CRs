@@ -1,0 +1,70 @@
+/*Parse "multipart/vnd.wap.multipart.alternative" which is a part of multipart body. (nested multipart)
+And take the first part of parsed as a parent part data.
+
+Change-Id:Icd45fe2adb6ad442594f7e7306ad26ced4cde3c8*/
+
+
+
+
+//Synthetic comment -- diff --git a/core/java/com/google/android/mms/ContentType.java b/core/java/com/google/android/mms/ContentType.java
+//Synthetic comment -- index 94bc9fd..b066fad 100644
+
+//Synthetic comment -- @@ -26,6 +26,7 @@
+public static final String MMS_GENERIC       = "application/vnd.wap.mms-generic";
+public static final String MULTIPART_MIXED   = "application/vnd.wap.multipart.mixed";
+public static final String MULTIPART_RELATED = "application/vnd.wap.multipart.related";
+    public static final String MULTIPART_ALTERNATIVE = "application/vnd.wap.multipart.alternative";
+
+public static final String TEXT_PLAIN        = "text/plain";
+public static final String TEXT_HTML         = "text/html";
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/core/java/com/google/android/mms/pdu/PduParser.java b/core/java/com/google/android/mms/pdu/PduParser.java
+//Synthetic comment -- index d465c5a..e43394c 100644
+
+//Synthetic comment -- @@ -778,24 +778,32 @@
+/* get part's data */
+if (dataLength > 0) {
+byte[] partData = new byte[dataLength];
+                String partContentType = new String(part.getContentType());
+pduDataStream.read(partData, 0, dataLength);
+                if (partContentType.equalsIgnoreCase(ContentType.MULTIPART_ALTERNATIVE)) {
+                    // parse "multipart/vnd.wap.multipart.alternative".
+                    PduBody childBody = parseParts(new ByteArrayInputStream(partData));
+                    // take the first part of children.
+                    part = childBody.getPart(0);
+                } else {
+                    // Check Content-Transfer-Encoding.
+                    byte[] partDataEncoding = part.getContentTransferEncoding();
+                    if (null != partDataEncoding) {
+                        String encoding = new String(partDataEncoding);
+                        if (encoding.equalsIgnoreCase(PduPart.P_BASE64)) {
+                            // Decode "base64" into "binary".
+                            partData = Base64.decodeBase64(partData);
+                        } else if (encoding.equalsIgnoreCase(PduPart.P_QUOTED_PRINTABLE)) {
+                            // Decode "quoted-printable" into "binary".
+                            partData = QuotedPrintable.decodeQuotedPrintable(partData);
+                        } else {
+                            // "binary" is the default encoding.
+                        }
+}
+                    if (null == partData) {
+                        log("Decode part data error!");
+                        return null;
+                    }
+}
+part.setData(partData);
+}
+
+
+
+
+
+
+
