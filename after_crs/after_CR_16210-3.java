@@ -1,0 +1,40 @@
+/*Mms: Fix for sending long SMS to multiple recipients
+
+When a long SMS is sent to multiple recipients, it is sent only to the first
+recipient. MMS app checks extra EXTRA_MESSAGE_SENT_SEND_NEXT for true before
+sending SMS to other recipients. Since same pending intent is used for all
+fragments, this is never true. Fixed this issue by using differnet pending
+intent for last fragment with extra EXTRA_MESSAGE_SENT_SEND_NEXT set to true.
+
+Change-Id:I9f61274e0f20698544090419a85e0e6b8daff3e0*/
+
+
+
+
+//Synthetic comment -- diff --git a/src/com/android/mms/transaction/SmsSingleRecipientSender.java b/src/com/android/mms/transaction/SmsSingleRecipientSender.java
+//Synthetic comment -- index 7d88488..c9f8c29 100644
+
+//Synthetic comment -- @@ -84,11 +84,16 @@
+mUri,
+mContext,
+SmsReceiver.class);
+
+            int requestCode = 0;
+if (i == messageCount -1) {
+                // Changing the requestCode so that a different pending intent
+                // is created for the last fragment with
+                // EXTRA_MESSAGE_SENT_SEND_NEXT set to true.
+                requestCode = 1;
+intent.putExtra(SmsReceiverService.EXTRA_MESSAGE_SENT_SEND_NEXT, true);
+}
+            sentIntents.add(PendingIntent.getBroadcast(mContext, requestCode, intent, 0));
+}
+try {
+smsManager.sendMultipartTextMessage(mDest, mServiceCenter, messages, sentIntents, deliveryIntents);
+
+
+
+
+
+
+
