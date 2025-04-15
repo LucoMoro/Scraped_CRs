@@ -1,0 +1,141 @@
+/*Enhance performance by using ViewHolder
+
+Change-Id:I8199b84b6822944383a79ab8ad3eb227f5e31508Signed-off-by: Roger Chen <cxr514033970@gmail.com>*/
+
+
+
+
+//Synthetic comment -- diff --git a/src/com/android/mms/ui/IconListAdapter.java b/src/com/android/mms/ui/IconListAdapter.java
+//Synthetic comment -- index e52a0d2..288be7e 100644
+
+//Synthetic comment -- @@ -35,7 +35,33 @@
+public class IconListAdapter extends ArrayAdapter<IconListAdapter.IconListItem> {
+protected LayoutInflater mInflater;
+private static final int mResource = R.layout.icon_list_item;
+    private ViewHolder mViewHolder;
+
+    static class ViewHolder {
+        private View mView;
+        private TextView mTextView;
+        private ImageView mImageView;
+
+        public ViewHolder(View view) {
+            mView = view;
+        }
+
+        public TextView getTextView() {
+            if (mTextView == null) {
+                mTextView = (TextView) mView.findViewById(R.id.text1);
+            }
+
+            return mTextView;
+        }
+
+        public ImageView getImageView() {
+            if (mImageView == null) {
+                mImageView = (ImageView) mView.findViewById(R.id.icon);
+            }
+
+            return mImageView;
+        }
+    }
+public IconListAdapter(Context context,
+List<IconListItem> items) {
+super(context, mResource, items);
+//Synthetic comment -- @@ -44,22 +70,22 @@
+
+@Override
+public View getView(int position, View convertView, ViewGroup parent) {
+View view;
+if (convertView == null) {
+view = mInflater.inflate(mResource, parent, false);
+            mViewHolder = new ViewHolder(view);
+            view.setTag(mViewHolder);
+} else {
+view = convertView;
+            mViewHolder = (ViewHolder) view.getTag();
+}
+
+// Set text field
+        TextView text = mViewHolder.getTextView();
+text.setText(getItem(position).getTitle());
+
+// Set resource icon
+        ImageView image = mViewHolder.getImageView();
+image.setImageResource(getItem(position).getResource());
+
+return view;
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/src/com/android/mms/ui/SlideshowEditActivity.java b/src/com/android/mms/ui/SlideshowEditActivity.java
+//Synthetic comment -- index de21e72..83cb60b 100644
+
+//Synthetic comment -- @@ -356,6 +356,31 @@
+private final int mResource;
+private final LayoutInflater mInflater;
+private final SlideshowModel mSlideshow;
+        private ViewHolder mViewHolder;
+
+        static class ViewHolder {
+            private TextView mSlideNumberText;
+            private TextView mDurationText;
+            private View mView;
+
+            public ViewHolder(View view) {
+                mView = view;
+            }
+
+            public TextView getSlideNumberText() {
+                if (mSlideNumberText == null) {
+                    mSlideNumberText = (TextView) mView.findViewById(R.id.slide_number_text);
+                }
+                return mSlideNumberText;
+            }
+
+            public TextView getDurationText() {
+                if (mDurationText == null) {
+                    mDurationText = (TextView) mView.findViewById(R.id.duration_text);
+                }
+                return mDurationText;
+            }
+        }
+
+public SlideListAdapter(Context context, int resource,
+SlideshowModel slideshow) {
+//Synthetic comment -- @@ -374,17 +399,23 @@
+
+private View createViewFromResource(int position, View convertView, int resource) {
+SlideListItemView slideListItemView;
+            if (convertView == null) {
+                slideListItemView = (SlideListItemView) mInflater.inflate(
+                        resource, null);
+                mViewHolder = new ViewHolder(slideListItemView);
+                slideListItemView.setTag(mViewHolder);
+            } else {
+                slideListItemView = (SlideListItemView) convertView;
+                mViewHolder = (ViewHolder) convertView.getTag();
+            }
+
+// Show slide number.
+            TextView text = mViewHolder.getSlideNumberText();
+text.setText(mContext.getString(R.string.slide_number, position + 1));
+
+SlideModel slide = getItem(position);
+int dur = slide.getDuration() / 1000;
+            text = mViewHolder.getDurationText();
+text.setText(mContext.getResources().
+getQuantityString(R.plurals.slide_duration, dur, dur));
+
+
+
+
+
+
+
+
