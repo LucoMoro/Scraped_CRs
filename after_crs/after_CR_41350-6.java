@@ -1,0 +1,152 @@
+/*Support for sms email sender and subject
+
+3GPP 23.040 3.8 specifies how email addresses are
+supported in sms messages.
+
+The old solution is moved down to CDMA classes and the new
+code is implemented for GSM.
+
+Change-Id:Ib796db068cc27c7e79347423bbf7eeb07e6bb780*/
+
+
+
+
+//Synthetic comment -- diff --git a/src/java/com/android/internal/telephony/SmsMessageBase.java b/src/java/com/android/internal/telephony/SmsMessageBase.java
+//Synthetic comment -- index 22d8cd8..efdfd45 100644
+
+//Synthetic comment -- @@ -312,13 +312,11 @@
+return indexOnIcc;
+}
+
+    /**
+     * Parses the message body, filtering out any potential email addres
+     * information
+     */
+    abstract protected void parseMessageBody();
+
+/**
+* Try to parse this message as an email gateway message
+//Synthetic comment -- @@ -330,21 +328,8 @@
+* TP-OA/TP-DA field contains a generic gateway address and the to/from
+* address is added at the beginning as shown above." (which is supported here)
+* - Multiple addresses separated by commas, no spaces, Subject field delimited
+     * by '()' or '##' and '#' Section 3.8 (only "Subject field delimited by '()'
+     * or '##' and '#'" is supported here)
+*/
+    abstract protected void extractEmailAddressFromMessageBody();
+}
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/src/java/com/android/internal/telephony/cdma/SmsMessage.java b/src/java/com/android/internal/telephony/cdma/SmsMessage.java
+//Synthetic comment -- index 4777cbb..7d2e6ca 100644
+
+//Synthetic comment -- @@ -416,6 +416,34 @@
+}
+
+/**
+     * {@inheritDoc}
+     */
+    protected void parseMessageBody() {
+        // originatingAddress could be null if this message is from a status
+        // report.
+        if (originatingAddress != null && originatingAddress.couldBeEmailGateway()) {
+            extractEmailAddressFromMessageBody();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected void extractEmailAddressFromMessageBody() {
+        /* Some carriers may use " /" delimiter as below
+         *
+         * 1. [x@y][ ]/[subject][ ]/[body]
+         * -or-
+         * 2. [x@y][ ]/[body]
+         */
+        String[] parts = messageBody.split("( /)|( )", 2);
+        if (parts.length < 2) return;
+        emailFrom = parts[0];
+        emailBody = parts[1];
+        isEmail = true;
+    }
+
+    /**
+* Returns the status for a previously submitted message.
+* For not interfering with status codes from GSM, this status code is
+* shifted to the bits 31-16.
+
+
+
+
+
+
+
+
+//Synthetic comment -- diff --git a/src/java/com/android/internal/telephony/gsm/SmsMessage.java b/src/java/com/android/internal/telephony/gsm/SmsMessage.java
+//Synthetic comment -- index 0bf1ea1..a72d49c 100644
+
+//Synthetic comment -- @@ -887,6 +887,50 @@
+return replyPathPresent;
+}
+
+     /** {@inheritDoc} */
+    protected void parseMessageBody() {
+        if (getProtocolIdentifier() == 0x32) {
+            //This is an "email sms", extract sender address from message body
+            isEmail = true;
+            extractEmailAddressFromMessageBody();
+        }
+    }
+
+    /** {@inheritDoc} */
+    protected void extractEmailAddressFromMessageBody() {
+        int firstDoubleHashIndex = messageBody.indexOf("##");
+        int firstSingleHashIndex = messageBody.indexOf('#', firstDoubleHashIndex + 2);
+        int firstLeftParenthesisIndex = messageBody.indexOf('(');
+        int firstRightParenthesisIndex = messageBody.indexOf(')', firstLeftParenthesisIndex + 1);
+
+        if (firstDoubleHashIndex >= 0 &&
+                firstDoubleHashIndex < firstSingleHashIndex &&
+                (firstLeftParenthesisIndex < 0 ||
+                firstRightParenthesisIndex < 0 ||
+                firstDoubleHashIndex < firstLeftParenthesisIndex)) {
+            // Using format from##subject#body
+            emailFrom = messageBody.substring(0, firstDoubleHashIndex);
+            pseudoSubject = messageBody.substring(firstDoubleHashIndex + 2, firstSingleHashIndex);
+            emailBody = messageBody.substring(firstSingleHashIndex + 1);
+        } else if (firstLeftParenthesisIndex >= 0 &&
+                   firstLeftParenthesisIndex < firstRightParenthesisIndex) {
+            // Using format from(subject)body
+            emailFrom = messageBody.substring(0, firstLeftParenthesisIndex);
+            pseudoSubject = messageBody.substring(firstLeftParenthesisIndex + 1,
+                                                  firstRightParenthesisIndex);
+            emailBody = messageBody.substring(firstRightParenthesisIndex + 1);
+        } else {
+            // Using format from[space]body
+            String[] parts = messageBody.split(" ", 1);
+            if (parts.length < 2) {
+                emailBody = parts[0];
+            } else {
+                emailFrom = parts[0];
+                emailBody = parts[1];
+            }
+        }
+    }
+
+/**
+* TS 27.005 3.1, &lt;pdu&gt; definition "In the case of SMS: 3GPP TS 24.011 [6]
+* SC address followed by 3GPP TS 23.040 [3] TPDU in hexadecimal format:
+
+
+
+
+
+
+
