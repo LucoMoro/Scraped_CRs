@@ -1,0 +1,12 @@
+//<Beginning of snippet n. 0>
+if (mActive != null) {
+    for (int i = 0; i < mAdded.size(); i++) {
+        Fragment f = mAdded.get(i);
+        if (f != null && f.isVisible() && !f.mHidden) {
+            if (f.onContextItemSelected(item)) {
+                return true;
+            }
+        }
+    }
+}
+//<End of snippet n. 0>
