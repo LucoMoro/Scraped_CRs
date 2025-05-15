@@ -1,0 +1,51 @@
+
+//<Beginning of snippet n. 0>
+
+
+/**
+* This class generates cryptographically secure pseudo-random numbers.
+*
+ * It is best to invoke {@code SecureRandom} using the default constructor.
+ * This will provide an instance of the most cryptographically strong
+ * provider available:
+ *
+ * <pre>SecureRandom sr = new SecureRandom();
+ * byte[] output = new byte[16];
+ * sr.nextBytes(output);</pre>
+*
+* <p>The default algorithm is defined by the first {@code SecureRandomSpi}
+* provider found in the VM's installed security providers. Use {@link
+* Security} to install custom {@link SecureRandomSpi} providers.
+*
+ * <p>Note that the output of a {@code SecureRandom} instance should not ever
+ * be relied upon to be deterministic. For deterministic output from a given
+ * input, see {@link MessageDigest}. For deriving keys from passwords, see
+ * {@link javax.crypto.SecretKeyFactory}.
+ *
+* <a name="insecure_seed"><h3>Seeding {@code SecureRandom} may be
+* insecure</h3></a>
+* A seed is an array of bytes used to bootstrap random number generation.
+* an internal entropy source, such as {@code /dev/urandom}. This seed is
+* unpredictable and appropriate for secure use.
+*
+ * <p>It is not recommended, but you may alternatively specify the initial
+ * seed explicitly with the {@link #SecureRandom(byte[]) seeded constructor}
+ * or by calling {@link #setSeed}.
+*
+ * <p>Depending on the underlying implementation, specifying a fixed seed may
+ * completely replace the default seed causing the instance to return a
+ * predictable sequence of numbers or it may remain truly random. Therefore,
+ * it is not recommended to use {@code setSeed} at all.
+*/
+public class SecureRandom extends Random {
+
+
+//<End of snippet n. 0>
+
+
+
+
+
+
+
+

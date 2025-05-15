@@ -1,0 +1,77 @@
+
+//<Beginning of snippet n. 0>
+
+
+import android.content.Context;
+import android.content.Entity;
+import android.database.Cursor;
+import android.net.Proxy;
+import android.net.TrafficStats;
+import android.net.Uri;
+import android.os.Build;
+
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.params.ConnRouteParams;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+HttpConnectionParams.setSoTimeout(params, timeout);
+HttpConnectionParams.setSocketBufferSize(params, 8192);
+HttpClient client = new DefaultHttpClient(getClientConnectionManager(), params);
+
+        if (mTrustSsl) {
+            HttpHost httpHost = Proxy.getPreferredHttpHost(mContext, "httpts://" + mHostAddress);
+            if (httpHost != null) {
+                if (Eas.USER_LOG) {
+                    userLog("Using proxy:" + httpHost.toString());
+                }
+                ConnRouteParams.setDefaultProxy(client.getParams(), httpHost);
+            }
+        }
+
+return client;
+}
+
+
+//<End of snippet n. 0>
+
+
+
+
+
+
+
+
+
+
+//<Beginning of snippet n. 1>
+
+
+
+@Override
+public Bundle autoDiscover(String userName, String password) throws RemoteException {
+            EasSyncService service = new EasSyncService();
+            // Must init the mContext that is used in getHttpClient.
+            service.mContext = ExchangeService.this;
+            return service.tryAutodiscover(userName, password);
+}
+
+@Override
+
+//<End of snippet n. 1>
+
+
+
+
+
+
+
+

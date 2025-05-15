@@ -1,0 +1,185 @@
+
+//<Beginning of snippet n. 0>
+
+
+public void createControl(Composite parent) {
+Font font = parent.getFont();
+
+        // Reload the AVDs to make sure we are up to date
+try {
+            // SDK can be null if the user opens the dialog before ADT finished
+            // initializing the SDK itself. In this case just don't reload anything
+            // so there's nothing obsolete yet.
+            Sdk sdk = Sdk.getCurrent();
+            if (sdk != null) {
+                AvdManager avdMan = sdk.getAvdManager();
+                assert avdMan != null;
+                avdMan.reloadAvds(NullLogger.getLogger());
+            }
+} catch (AndroidLocationException e1) {
+// this happens if the AVD Manager failed to find the folder in which the AVDs are
+// stored. There isn't much we can do at this point.
+
+//<End of snippet n. 0>
+
+
+
+
+
+
+
+
+
+
+//<Beginning of snippet n. 1>
+
+
+private static List<Device> mUserDevices;
+private static List<Device> mDefaultDevices;
+private static final Object sLock = new Object();
+    private static final List<DevicesChangeListener> sListeners =
+                                        new ArrayList<DevicesChangeListener>();
+
+public static enum DeviceStatus {
+/**
+}
+
+// TODO: Refactor this to look more like AvdManager so that we don't have
+    // multiple instances in the same application, which forces us to parse
+    // the XML multiple times when we don't have to.
+public DeviceManager(ILogger log) {
+mLog = log;
+}
+
+/**
+* Register a listener to be notified when the device lists are modified.
+     *
+     * @param listener The listener to add. Ignored if already registered.
+*/
+public void registerListener(DevicesChangeListener listener) {
+        if (listener != null) {
+            synchronized (sListeners) {
+                if (!sListeners.contains(listener)) {
+                    sListeners.add(listener);
+                }
+            }
+        }
+}
+
+/**
+* Removes a listener from the notification list such that it will no longer receive
+* notifications when modifications to the {@link Device} list occur.
+     *
+* @param listener The listener to remove.
+*/
+public boolean unregisterListener(DevicesChangeListener listener) {
+        synchronized (sListeners) {
+            return sListeners.remove(listener);
+        }
+}
+
+public DeviceStatus getDeviceStatus(
+}
+
+/**
+     * Returns all vendor-provided {@link Device}s
+*
+* @param sdkLocation Location of the Android SDK
+     * @return A list of vendor-provided {@link Device}s
+*/
+public List<Device> getVendorDevices(String sdkLocation) {
+synchronized (sLock) {
+}
+
+/**
+     * Returns all user-created {@link Device}s
+*
+     * @return All user-created {@link Device}s
+*/
+public List<Device> getUserDevices() {
+synchronized (sLock) {
+mLog.warning("Couldn't load user devices: %1$s", e.getMessage());
+} catch (SAXException e) {
+// Probably an old config file which we don't want to overwrite.
+                    if (userDevicesFile != null) {
+                        String base = userDevicesFile.getAbsoluteFile() + ".old";
+                        File renamedConfig = new File(base);
+                        int i = 0;
+                        while (renamedConfig.exists()) {
+                            renamedConfig = new File(base + '.' + (i++));
+                        }
+                        mLog.error(null, "Error parsing %1$s, backing up to %2$s",
+                                userDevicesFile.getAbsolutePath(), renamedConfig.getAbsolutePath());
+                        userDevicesFile.renameTo(renamedConfig);
+}
+} catch (FileNotFoundException e) {
+mLog.warning("No user devices found");
+} catch (ParserConfigurationException e) {
+                    mLog.error(null, "Error parsing %1$s",
+                            userDevicesFile == null ? "(null)" : userDevicesFile.getAbsolutePath());
+} catch (IOException e) {
+                    mLog.error(null, "Error parsing %1$s",
+                            userDevicesFile == null ? "(null)" : userDevicesFile.getAbsolutePath());
+}
+}
+}
+}
+
+private void notifyListeners() {
+        synchronized (sListeners) {
+            for (DevicesChangeListener listener : sListeners) {
+listener.onDevicesChange();
+}
+}
+
+//<End of snippet n. 1>
+
+
+
+
+
+
+
+
+
+
+//<Beginning of snippet n. 2>
+
+
+import com.android.sdkuilib.repository.ISdkChangeListener;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+* thus composed of the {@link AvdManagerWindowImpl1} (the window shell itself) and this
+* page displays the actually list of AVDs and various action buttons.
+*/
+public class AvdManagerPage extends Composite
+    implements ISdkChangeListener, DevicesChangeListener, DisposeListener {
+
+private AvdSelector mAvdSelector;
+
+}
+
+@Override
+    public void widgetDisposed(DisposeEvent e) {
+        dispose();
+    }
+
+    @Override
+public void dispose() {
+mUpdaterData.removeListener(this);
+mDeviceManager.unregisterListener(this);
+
+//<End of snippet n. 2>
+
+
+
+
+
+
+
+
