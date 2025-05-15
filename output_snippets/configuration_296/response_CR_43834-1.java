@@ -1,0 +1,8 @@
+//<Beginning of snippet n. 0>
+@Override
+public void createControl(Composite parent) {
+        mTextControl = new Text(parent, SWT.BORDER | SWT.READ_ONLY | SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.H_SCROLL);
+        mTextControl.setEditable(false);
+        mTextControl.setSize(400, 300); // Set specific dimensions
+}
+//<End of snippet n. 0>
