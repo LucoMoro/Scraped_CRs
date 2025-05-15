@@ -1,0 +1,49 @@
+//<Beginning of snippet n. 0>
+
+private static final int LOCATION_HAS_ACCURACY = 16;
+
+// IMPORTANT - the GPS_DELETE_* symbols here must match constants in gps.h
+private static final int GPS_DELETE_EPHEMERIS = 0x0001;
+private static final int GPS_DELETE_ALMANAC = 0x0002;
+private static final int GPS_DELETE_POSITION = 0x0004;
+private static final int GPS_DELETE_TIME = 0x0008;
+private static final int GPS_DELETE_IONO = 0x0010;
+private static final int GPS_DELETE_UTC = 0x0020;
+private static final int GPS_DELETE_HEALTH = 0x0040;
+private static final int GPS_DELETE_SVDIR = 0x0080;
+private static final int GPS_DELETE_SVSTEER = 0x0100;
+private static final int GPS_DELETE_SADATA = 0x0200;
+private static final int GPS_DELETE_RTI = 0x0400;
+private static final int GPS_DELETE_CELLDB_INFO = 0x8000;
+private static final int GPS_DELETE_ALL = 0xFFFF;
+
+// The GPS_CAPABILITY_* flags must match the values in gps.h
+private static final int GPS_CAPABILITY_SCHEDULING = 0x0000001;
+
+private void deleteAidingData(Bundle extras) {
+    int flags = 0;
+
+    if (extras.getBoolean("ephemeris")) flags |= GPS_DELETE_EPHEMERIS;
+    if (extras.getBoolean("almanac")) flags |= GPS_DELETE_ALMANAC;
+    if (extras.getBoolean("position")) flags |= GPS_DELETE_POSITION;
+    if (extras.getBoolean("time")) flags |= GPS_DELETE_TIME;
+    if (extras.getBoolean("iono")) flags |= GPS_DELETE_IONO;
+    if (extras.getBoolean("utc")) flags |= GPS_DELETE_UTC;
+    if (extras.getBoolean("health")) flags |= GPS_DELETE_HEALTH;
+    if (extras.getBoolean("svdir")) flags |= GPS_DELETE_SVDIR;
+    if (extras.getBoolean("svsteer")) flags |= GPS_DELETE_SVSTEER;
+    if (extras.getBoolean("sadata")) flags |= GPS_DELETE_SADATA;
+    if (extras.getBoolean("rti")) flags |= GPS_DELETE_RTI;
+    if (extras.getBoolean("celldb-info")) flags |= GPS_DELETE_CELLDB_INFO;
+    if (extras.getBoolean("all")) flags |= GPS_DELETE_ALL;
+
+    // Implement thread-safe deletion logic here if needed
+    performDeletion(flags);
+}
+
+// Placeholder for the actual deletion logic
+private void performDeletion(int flags) {
+    // Implementation for deletion of data based on flags
+}
+
+//<End of snippet n. 0>
