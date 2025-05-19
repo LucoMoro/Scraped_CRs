@@ -1,0 +1,22 @@
+<<Beginning of snippet n. 0>>
+if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+    int volumeID = FileUtils.getFatVolumeId(path);
+    if (LOCAL_LOGV) Log.v(TAG, path + " volume ID: " + volumeID);
+    
+    if (volumeID != -1) {
+        String dbName = "external-" + Integer.toHexString(volumeID) + ".db";
+        db = new DatabaseHelper(context, dbName, false);
+    } else {
+        Log.e(TAG, "Invalid volume ID: " + volumeID);
+        notifyUser("Invalid volume ID, please check your external storage.");
+    }
+} else {
+    Log.e(TAG, "External storage is unmounted.");
+    notifyUser("External storage is unmounted, database operations cannot proceed.");
+}
+
+private void notifyUser(String message) {
+    // Implementation for user notification
+    // e.g., Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+}
+<<End of snippet n. 0>>
