@@ -1,0 +1,21 @@
+
+//<Beginning of snippet n. 0>
+
+
+else if ("Intent".equalsIgnoreCase(commands[0])) {
+for (int i = 1; i < commands.length; i++) {
+try {
+                        Intent intent = Intent.getIntent(commands[i]);
+if (intent.getStringExtra(SENTENCE_EXTRA) == null) {
+intent.putExtra(SENTENCE_EXTRA, literal);
+}
+
+//<End of snippet n. 0>
+
+
+
+
+
+
+
+
